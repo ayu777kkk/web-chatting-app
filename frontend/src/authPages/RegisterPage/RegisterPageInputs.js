@@ -1,7 +1,9 @@
 import React from "react";
 import InputWithLabel from "../../shared/components/InputWithLabel";
 
-const LoginPageInputs = ({ mail, setMail, password, setPassword }) => {
+const RegisterPageInputs = (props) => {
+
+    const { mail, setMail, username, setUsername, password, setPassword } = props;
     
   return (
   <>
@@ -11,6 +13,13 @@ const LoginPageInputs = ({ mail, setMail, password, setPassword }) => {
       label="E-mail"
       type="text"
       placeholder="Enter email address"
+    />
+    <InputWithLabel 
+      value={username}
+      setValue={setUsername}
+      label="Username"
+      type="text"
+      placeholder="Enter your username"
     />
     <InputWithLabel 
       value={password}
@@ -24,4 +33,4 @@ const LoginPageInputs = ({ mail, setMail, password, setPassword }) => {
 
 };
 
-export default LoginPageInputs;
+export default RegisterPageInputs;
