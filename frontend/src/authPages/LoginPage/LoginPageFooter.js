@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 
 const getFormNotValidMessage = () => {
-  return "Please enter valid email and password. Password should contains between 8 to 20 characters!";
+  return "Please enter valid email and password. Password should contains between 6 to 12 characters!";
   // "Please enter valid email and password should contains between 6 to 12 characters and should not contain any special characters or numbers!"
 };
 
