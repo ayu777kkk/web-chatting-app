@@ -10,7 +10,7 @@ const validatePassword = (password) => {
     return password.length >= 6 && password.length <= 12;
 };
 
-const validateMail = (mail) => {
+export const validateMail = (mail) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(mail);
 };
