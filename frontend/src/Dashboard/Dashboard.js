@@ -7,6 +7,7 @@ import AppBar from "./AppBar/AppBar";
 import { logout } from "../shared/utils/auth";
 import { connect } from "react-redux";
 import { getActions } from "../store/actions/authActions";
+import { connectWithSocketServer } from "../realtimeCommunication/socketConnection";
 
 const Wrapper = styled("div")({
   display: "flex",
@@ -16,15 +17,14 @@ const Wrapper = styled("div")({
 
 const Dashboard = ({ setUserDetails }) => {
 
+  // Retrieve user details from local storage and set it in the state
   useEffect(() => {
     const userDetails = localStorage.getItem("userDetails");
-    console.log("Retrieved user details:", userDetails);
     if (!userDetails) {
-      console.log("No user details found, logging out...");
       logout();
     } else {
-      console.log("Setting user details:", JSON.parse(userDetails));
       setUserDetails(JSON.parse(userDetails));
+      connectWithSocketServer(JSON.parse(userDetails));
     }
   }, []);
     
