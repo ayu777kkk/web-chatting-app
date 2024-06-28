@@ -2,6 +2,7 @@ const { disconnect } = require('mongoose');
 const authSocket = require('./middleware/authSocket');
 const newConnectionHandler = require('./socketHandlers/newConnectionHandler');
 const disconnectHandler = require('./socketHandlers/disconnectHandler');
+const serverStore = require('./serverStore');
 
 const registerSocketServer = (server) => {
     const io = require('socket.io')(server, {
@@ -11,10 +12,17 @@ const registerSocketServer = (server) => {
         },
     });
 
+    serverStore.setSocketServerInstance(io);
+
     // Middleware to authenticate socket connections
     io.use((socket, next) => {
         authSocket(socket, next);
     });
+
+    const emitOnlineUsers = () => {
+        const onlineUsers = serverStore.getOnlineUsers();
+        io.emit('online-users', { onlineUsers });
+    };
 
     // Socket connection event
     io.on('connection', (socket) => {
@@ -22,11 +30,16 @@ const registerSocketServer = (server) => {
         console.log(socket.id);
 
         newConnectionHandler(socket, io);
+        emitOnlineUsers();
 
         socket.on('disconnect', () => {
             disconnectHandler(socket);
         })
     });
+
+    setInterval(() => {
+        emitOnlineUsers();
+    }, [8000]);
 };
 
 module.exports = {
