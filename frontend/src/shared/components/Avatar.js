@@ -11,7 +11,6 @@ const AvatarPreview = styled('div')({
     display: 'flex',
     fontSize: '20px', 
     fontWeight: '700',
-    marginLeft: '5px',
     color: 'white',
 });
 
