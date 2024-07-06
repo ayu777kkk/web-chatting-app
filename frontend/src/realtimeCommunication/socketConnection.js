@@ -7,6 +7,7 @@ import {
 import store from '../store/store';
 import { updateDirectChatHistoryIfActive} from '../shared/utils/chat';
 import * as roomHandler from './roomHandler';
+import * as webRTCHandler from './webRTCHandler';
 
 let socket = null;
 
@@ -57,6 +58,25 @@ export const connectWithSocketServer = (userDetails) => {
     socket.on('active-rooms', (data) => {
         roomHandler.updateActiveRooms(data);
     });
+
+    socket.on('conn-prep', (data) => {
+        const { connUserSocketId } = data;
+        // console.log('conn-prep received, preparing new peer connection as receiver');
+        webRTCHandler.prepareNewPeerConnection(connUserSocketId, false);
+
+        socket.emit('conn-init', { connUserSocketId: connUserSocketId });
+    });
+
+    socket.on('conn-init', (data) => {
+        const { connUserSocketId } = data;
+        // console.log('conn-init received, preparing new peer connection as initiator');
+        webRTCHandler.prepareNewPeerConnection(connUserSocketId, true);
+    });
+
+    socket.on('conn-signal', (data) => {
+        console.log('conn-signal received, handling signaling data');
+        webRTCHandler.handleSignalingData(data);
+    });
 };
 
 export const sendDirectMessage = (data) => {
@@ -77,4 +97,9 @@ export const joinRoom = (data) => {
 
 export const leaveRoom = (data) => {
     socket.emit('room-leave', data);
+};
+
+export const signalPeerData = (data) => {
+    console.log('signalPeerData called');
+    socket.emit('conn-signal', data);
 };

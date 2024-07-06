@@ -1,4 +1,3 @@
-const { disconnect } = require('mongoose');
 const authSocket = require('./middleware/authSocket');
 const newConnectionHandler = require('./socketHandlers/newConnectionHandler');
 const disconnectHandler = require('./socketHandlers/disconnectHandler');
@@ -8,6 +7,8 @@ const directChatHistoryHandler = require('./socketHandlers/directChatHistoryHand
 const roomCreateHandler = require('./socketHandlers/roomCreateHandler');
 const roomJoinHandler = require('./socketHandlers/roomJoinHandler');
 const roomLeaveHandler = require('./socketHandlers/roomLeaveHandler');
+const roomInitializeConnectionHandler = require('./socketHandlers/roomInitializeConnectionHandler');
+const roomSignalingDataHandler = require('./socketHandlers/roomSignalingDataHandler');
 
 const registerSocketServer = (server) => {
     const io = require('socket.io')(server, {
@@ -31,8 +32,6 @@ const registerSocketServer = (server) => {
 
     // Socket connection event
     io.on('connection', (socket) => {
-        console.log('a user connected');
-        console.log(socket.id);
 
         newConnectionHandler(socket, io);
         emitOnlineUsers();
@@ -55,6 +54,16 @@ const registerSocketServer = (server) => {
 
         socket.on('room-leave', (data) => {
             roomLeaveHandler(socket, data);
+        });
+
+        socket.on('conn-init', (data) => {
+            console.log('conn-init backend')
+            roomInitializeConnectionHandler(socket, data);
+        });
+
+        socket.on('conn-signal', (data) => {
+            console.log('conn-signal backend')
+            roomSignalingDataHandler(socket, data);
         });
 
         socket.on('disconnect', () => {

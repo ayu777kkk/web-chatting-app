@@ -10,6 +10,13 @@ import './index.css';
 const container = document.getElementById('root');
 const root = createRoot(container);
 
+window.process = {
+  env: {
+    NODE_ENV: 'development', // 或 'production'，根据你的环境设置
+  },
+};
+
+
 root.render(
   <React.StrictMode>
     <Provider store={store}>

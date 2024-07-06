@@ -11,6 +11,16 @@ const roomJoinHandler = (socket, data) => {
 
     const roomDetails = serverStore.getActiveRoom(roomId);
     serverStore.joinActiveRoom(roomId, participantDetails);
+
+    // send info to users in the room that a new user has joined
+    roomDetails.participants.forEach((participant) => {
+        if (participant.socketId !== participantDetails.id) {
+            socket.to(participant.socketId).emit('conn-prep', {
+                connUserSocketId: participantDetails.socketId,
+            });
+        }
+    });
+
     roomsUpdates.updateRooms();
 };
 

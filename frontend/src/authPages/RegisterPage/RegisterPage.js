@@ -18,7 +18,7 @@ const RegisterPage = ({ register }) => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const handleRegister = () => {
-    console.log("handleRegister");
+    //console.log("handleRegister");
     const userDetails = {
       mail,
       password,

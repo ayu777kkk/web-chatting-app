@@ -20,7 +20,7 @@ const LoginPage = ({ login }) => {
     }, [mail, password, setIsFormValid]);
 
     const handleLogin = () => {
-      console.log("handleLogin");
+      //("handleLogin");
       const userDetails = {
         mail,
         password, 
