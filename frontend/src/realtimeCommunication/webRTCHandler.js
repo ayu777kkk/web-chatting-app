@@ -93,6 +93,52 @@ export const addNewRemoteStream = (remoteStream) => {
     // TODO: add remote stream to our server store
     const remoteStreams = store.getState().room.remoteStreams;
     const newRemoteStreams = [...remoteStreams, remoteStream];
-    
+
     store.dispatch(setRemoteStreams(newRemoteStreams));
+};
+
+export const closeAllConnections = () => {
+    Object.entries(peers).forEach((mappedObject) => {
+        const connUserSocketId = mappedObject[0];
+        if (peers[connUserSocketId]) {
+            peers[connUserSocketId].destroy();
+            delete peers[connUserSocketId];
+        }
+    });
+};
+
+export const handleParticipantLeftRoom = (data) => {
+    const { connUserSocketId } = data;
+
+    if (peers[connUserSocketId]) {
+        peers[connUserSocketId].destroy();
+        delete peers[connUserSocketId];
+    }
+
+    const remoteStreams = store.getState().room.remoteStreams;
+
+    const newRemoteStreams = remoteStreams.filter(remoteStream => 
+        remoteStream.connUserSocketId !== connUserSocketId
+    );
+
+    store.dispatch(setRemoteStreams(newRemoteStreams));
+};
+
+export const switchOutgoingTracks = (stream) => {
+    for (let socketId in peers) {
+        for (let index in peers[socketId].streams[0].getTracks()) {
+            for (let index2 in stream.getTracks()) {
+                if (peers[socketId].streams[0].getTracks()[index].kind === 
+                    stream.getTracks()[index2].kind
+                ) {
+                    peers[socketId].replaceTrack(
+                        peers[socketId].streams[0].getTracks()[index],
+                        stream.getTracks()[index2],
+                        peers[socketId].streams[0]
+                    );
+                    break;
+                }
+            }
+        }
+    }
 };
